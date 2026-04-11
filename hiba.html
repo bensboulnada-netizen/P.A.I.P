@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        /* 🌌 BACKGROUND IMAGE */
+        body{
+        margin:0;
+        padding:0;
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-family:Poppins;
+        background:url("background.jpeg") no-repeat center/cover;
+    }
+    /* 🖼️ LOGO SIDE */
+    .logo{
+        position: fixed;
+        top: 30px;
+        left: 30px;
+        width: 120px;
+        height: 120px;
+        border-radius:50%;
+        box-shadow:0 0 15px rgb(169, 232, 247);
+        z-index:999;
+    }
+    /* 🏷️ LOGO TEXT */
+    .logo-text{
+        position: fixed;
+        top: 160px;
+        left: 30px;
+        color:#38BDF8;
+        font-weight:bold;
+        font-size:18px;
+        text-align:center;
+    }
+    /* 🔲 OVERLAY */
+    body::before{
+        content:"";
+        position:absolute;
+        width:100%;
+        height:100%;
+        background:rgba(15,23,42,0.5);
+        backdrop-filter:blur(2px);
+        z-index:0;
+    }
+    /* 📦 CONTAINER */
+    .container{
+        position:relative;
+        z-index:1;
+        background:rgba(255,255,255,0.08);
+        padding:30px;
+        border-radius:20px;
+        box-shadow:0 0 30px rgba(0,0,0,0.6);
+        width:380px;
+        backdrop-filter:blur(6px);
+        border:1px solid rgba(255,255,255,0.2);
+    }
+    /* 🏷 TITLE */
+    h2 {
+        text-align:center;
+        margin-bottom:20px;
+        color:#38BDF8;
+    }
+    /* 📊 TABLE */
+    table{
+        width:100%;
+        border-collapse:collapse;
+    }
+    td{
+        padding:12px;
+        color:#E2E8F0;
+    }
+    /*✨ INPUT */
+    input{
+        width:100%;
+        padding:10px;
+        border-radius:10px;
+        border:none;
+        outline:none;
+        background:#0F172A;
+        color:white;
+        transition:0.3s;
+    }
+    input:focus{
+        box-shadow:0 0 10px #38BDF8;
+    }
+    /*🚀 BUTTON */
+    button{
+        width:100%;
+        padding:12px;
+        background:linear-gradient(45deg,#38BDF8,#6366F1);
+        border:none;
+        border-radius:10px;
+        color:white;
+        font-weight:bold;
+        cursor:pointer;
+        transition:0.3s;
+    }
+    button:hover{
+        transform:scale(1.05);
+    }
+    /*🔗 LINK (محسن) */
+    #registerLink{
+        display:block;
+        margin-top:20px;
+        text-align:center;
+    }
+    #registerLink a{
+        color:#38BDF8; /* لون جميل وواضح */
+        font-weight:bold;
+        text-decoration:none;
+        transition:0.3s;
+    }
+    #registerLink a:hover{
+        color:#FACC15; /* يتغير اللون عند المرور */
+        text-decoration:underline;
+    }
+    /*⬇️ ARROW */
+    #arrow{
+        display:none;
+        color:#F87171;
+        font-size:20px;
+        margin-right:5px;
+    }
+    /*❌ MESSAGE */
+    #msg{
+        text-align:center;
+        margin-top:10px;
+        color:#F87171;
+    }
+    </style>
+</head>
+<body>
+    <!-- 🖼️ LOGO -->
+    <img src="logo.jpg" class="logo" alt="Logo">
+    <div class="logo-text">P.A.I.PR</div>
+    <div class="container">
+    <h2>🔐 LOGIN</h2>
+    <form onsubmit="return validation()">
+        <table>
+            <tr>
+                <td>👤 Nom :</td>
+                <td><input type="text" id="nom" placeholder="Entrez votre nom"></td>
+            </tr>
+            <tr>
+                <td>🔑 Mot de passe :</td>
+                <td><input type="password" id="pwd" placeholder="Entrez votre mot de passe"></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button type="submit">Envoyer</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div id="msg"></div>
+        <!-- 🔗 LINK -->
+        <div id="registerLink">
+            <span id="arrow">⬇️</span>
+            <a href="hiba1.html">Créer un compte</a>
+        </div>
+    </div>
+    <script>
+        function validation() {
+            var nom = document.getElementById("nom").value.trim();
+            var pass = document.getElementById("pwd").value.trim();
+            if(nom === "" || pass === ""){
+                alert("Remplir tous les champs !");
+                return false;
+            }
+            // 🔥 users من localStorage
+            var savedUsers = JSON.parse(localStorage.getItem("users")) || [];
+            // 🔥 البحث عن المستخدم
+            var found = savedUsers.find(u => u.nom === nom && u.pass === pass);
+            if(found){
+                localStorage.setItem("currentUser", nom);
+                // 👉 الصفحة 3
+                window.location.href = "hiba2.html"; // أو home.html
+            } 
+            else {
+                // ❌ إذا غير موجود → يذهب للتسجيل
+                alert("Compte non trouvé, redirection vers inscription");
+                window.location.href = "hiba1.html";
+            }
+            return false;
+        }
+    </script>
+</body>
+</html>

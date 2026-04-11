@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Quiz</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>/*CSS*/
+body{
+    margin:0;/*Suppression des espaces blancs*//*ازاله الفراغات البيضاء*/
+    min-height:100vh; /*La hauteur occupe tout l'écran.*//*الارتفاع يأخذ كامل الشاشة.*/
+    display:flex;/*Fabrique des objets au milieu*/ /*يجعل العناصر في الوسط.*/
+    justify-content:center;/*Placez la boîte exactement au milieu.*//*تجعل الصندوق بالوسط تماماً.*/
+    align-items:center;/*Placez la boîte exactement au milieu.*//*تجعل الصندوق بالوسط تماماً.*/
+    background-size:cover;/*Un arrière-plan qui ne laisse aucune lacune*//*خلفيه لا تترك فراغ*/
+    background-position:center;
+    font-family:Arial;/*Toutes les lignes sont claires*//*كل الخطوط واضحه*/
+}
+.quiz{ 
+    background:rgba(175, 195, 241, 0.85);/*Un fond semi-transparent, laissant apparaître une partie du fond de la page originale.*//*خلفية شبه شفافة، تظهر بعض الشيء من الخلفية الأصلية للصفحة*/
+    padding:25px;/*Pour les éléments à l'intérieur de la boîte qui ne collent pas aux bords*//*لمحتوى داخل الصندوق لا يلتصق بالحواف*/
+    width:500px;/*Taille de la boîte*//*حجم الصندوق*/
+    border-radius:10px;/*Les bords de la boîte sont arrondis.*//*حواف الصندوق مستديره*/
+    text-align:center;/*Boutons et texte au centre de la boîte*//*ازرار والنصوص في الوسط الصندوق*/
+}
+.answer{
+    width:100%;/*Les choix de réponses s'étendent sur toute la largeur de la zone de questionnaire.*//*خيارات الإجابة تمتد على كامل عرض صندوق الكويز*/
+    margin:6px 0;/*Il y a un espace entre chaque choix de réponse.*//*هناك فراغ بين كل خيار إجابة والآخر*/
+    padding:12px;/*Le texte de chaque option ne colle pas aux bords.*//*النص داخل كل خيار لا يلتصق بالحواف.*/
+    font-size:18px; /* Options de taille de police*//*حجم خط الاختيارات*/
+    font-weight:500;/*Taille de la police*//*حجم الخط*/
+    border-radius:8px;/* Le bouton a des coins arrondis.*//*زوايا الزر مستديره*/
+    border:1px solid #0e1a52;/*Couleur de l'ombre du bouton*//*لون ظل الزر*/
+    transition:0.3s;/*Cela permet à tout changement de se dérouler en douceur.*//*يجعل اي تغيير يحدث بسلاسه*/
+}
+.answer:hover {
+    background-color: #7da7ff;/*Changer la couleur de fond au survol de la souris.*//*تغيير لون الخلفية عند المرور بالماوس*/
+    cursor: pointer;/*Changez le curseur de la souris en forme de main.*//*تغيير شكل الماوس على شكل اليد*/
+    transform:scale(1.03);/*Agrandir la taille du bouton*//*تكبير حجم الزر*/
+}
+.correct{
+    background:green;color:white;/*Lorsque l'utilisateur sélectionne une réponse correcte, celle-ci apparaît en vert.*//*عندما يختار المستخدم جوابًا صحيحًا يظهر باللون الأخضر*/
+}
+.wrong{
+    background:red;color:white;/*Lorsqu'un utilisateur choisit une réponse incorrecte, celle-ci apparaît en rouge.*//*عندما يختار المستخدم جوابًا خاطئًا يظهر باللون الأحمر*/
+}
+#next{
+    background:#5145ba;/*Couleur d’arrière-plan du bouton*//*لون خلفيه الزر*/
+    color:white;/*Couleur du texte*//*لون النص*/
+    padding:10px 15px;/*Distance intérieure*//*مسافة داخلية*/
+    margin-top:15px;/*Distance externe*//*مسافة خارجية*/
+    border:none;/*Supprimer un cadre*//*إزالة إطار*/
+    border-radius:6px;/*Bords arrondis*//*حواف مستديره*/
+    cursor:pointer;/*Changez le curseur de la souris en forme de main.*//*تغيير شكل الماوس على شكل اليد*/
+    display:none;/*Le fait de masquer le bouton initialement ne le fait apparaître qu'après qu'une réponse ait été choisie.*/
+    /*إخفاء الزر في البداية لا يظهر إلا بعد اختيار إجابة.*/
+}
+#next:hover{ background:#918cc1; }/*Changer la couleur de fond au survol de la souris.*//*تغيير لون الخلفيه حينما يمر الماوس*/
+#title{
+    font-size:28px; /*Taille de la police*//*حجم الخط*/
+    color:#2a1b52; /* Couleur de police*//*لون الخط*/
+    font-weight:bold; /*Ligne grasse*//* خط عريض */
+    margin-bottom:15px;/*La distance entre le titre et la question*//*المسافه بين العنوان والسؤال*/
+}
+#q{
+    font-size:22px;/* Taille de la police des questions*//*حجم خط السؤال*/
+    font-weight:600;/*Largeur de ligne*//*عرض الخط*/
+    margin-bottom:15px;/*La distance entre la question et les choix*//*المسافه بين السؤال والاختيارات*/
+    color:#5b6b84;/*Question de couleur*//*اللون السؤال*/
+}
+</style>
+</head>
+<!--HTML-->
+<body>
+<div class="quiz">
+  <h3 id="title"></h3><!--Un titre court dont la fonction est d'afficher le nom de la catégorie et le nombre de questions-->
+  <!--عنوان صغير وظيفته عرض اسم الفئه وعدد الاسئله-->
+  <p id="q"></p><!--Paragraphe de texte--><!--فقره نصيه-->
+  <div id="answers"></div><!--Entrez les boutons de réponse-->
+  <!--ادخال ازرار الاجابات-->
+  <button id="next" style="display:none">Next</button><!--Passez à la question suivante-->
+  <!--انتقال للسؤال التالي-->
+</div>
+<script>
+function goProfile(){
+    window.location.href = "rania 3.html"; // smiyat page tracker dyalk
+}
+</script>
+<script>//JAVASCRIPT
+//Lecture des données de la page précédente
+//قراءة البيانات القادمة من الصفحة السابقة
+const params=new URLSearchParams(location.search);
+//Sélectionnez la langue choisie par l'utilisateur
+//تحديد اللغة التي اختارها المستخدم
+const cat=params.get("category");
+//Indiquez le numéro choisi par l'utilisateur
+//تحديد الرقم الذي اختاره المستخدم
+const num=parseInt(params.get("number"));
+//Associe le nom de la langue à l'image de fond
+//يربط بين اسم اللغه والصوره الخلفيه
+const bg={
+ HTML:"html.jpeg",
+ CSS:"css.jpeg",
+ JavaScript:"js.jpeg",
+ Python:"python1.jpeg",
+ "C++":"cpp1.jpeg",
+ PHP:"php.jpeg",
+ POO:"image de POO.jpg"
+ 
+};
+//Une image appropriée, telle que la langue du quiz, est placée en arrière-plan de toute la page.
+//يتم وضع صورة مناسبة كلغة الكويز كخلفية للصفحة بالكامل
+document.body.style.backgroundImage=`url('${bg[cat]}')`;
+//Affiche le nom de la langue et le nombre de questions, et change dynamiquement.
+//عرض اسم اللغه وعدد الاسئله ويتغير ديناميكيا
+document.getElementById("title").innerText=`${cat} - ${num} questions`;
+//Il contient toutes les questions du quiz.
+//يخزن كل اسئله الكويز
+const db={
+ "C++":[
+  //q:Contient le texte de la question يحتوي على نص السؤال
+  //a:Matrice des options مصفوفه الخيارات
+  //c:Le nombre de réponses correctes رقم الاجابه الصحيحه
+    {q:"Qui a créé C++ ?",a:["Dennis Ritchie","Bjarne Stroustrup","Guido"],c:1},
+    {q:"Extension C++ ?",a:[".js",".py",".cpp"],c:2},
+    {q:"C++ est dérivé de ?",a:["C","Java","Python"],c:0},
+    {q:"C++ est ?",a:["Langage compilé","Langage interprété","Langage markup"],c:0},
+    {q:"Mot clé pour classe ?",a:["function","class","def"],c:1},
+    {q:"Opérateur d'addition ?",a:["*","-","+"],c:2},
+    {q:"Boucle for C++ ?",a:["for i in range(5)","foreach","for(int i=0;i<5;i++)"],c:2},
+    {q:"Pointeur est ?",a:["Variable adresse","Variable normale","Fonction"],c:0},
+    {q:"Standard output ?",a:["print","cout","echo"],c:1},
+    {q:"Condition IF ?",a:["while()","if()","for()"],c:1},
+    {q:"Type entier ?",a:["string","int","float"],c:1},
+    {q:"Type flottant ?",a:["int","char","float"],c:2},
+    {q:"Tableau C++ ?",a:["list[]","table[]","array[]"],c:2},
+    {q:"Switch sert à ?",a:["Sélection multiple","Boucle","Fonction"],c:0},
+    {q:"Header file ?",a:[".h",".cpp",".js"],c:0},
+    {q:"Constante ?",a:["let","var","const"],c:2},
+    {q:"Fonction main ?",a:["function main()","int main()","def main()"],c:1},
+    {q:"Opérateur égal ?",a:["=","==","==="],c:1},
+    {q:"Commentaire ligne ?",a:["# commentaire","// commentaire","/* */"],c:1},
+    {q:"Namespace ?",a:["namespace std","package java","module python"],c:0}
+  ],
+  "JavaScript":[
+    {q:"Langage du navigateur ?",a:["JavaScript","PHP","C++"],c:0},
+    {q:"Afficher en JS ?",a:["print()","echo()","alert()"],c:2},
+    {q:"Commentaire en JS ?",a:["<!--","//","/*"],c:1},
+    {q:"Type vrai/faux ?",a:["Int","Boolean","String"],c:1},
+    {q:"Ajouter élément HTML ?",a:["document.createElement()","console.log()","appendChild()"],c:0},
+    {q:"Variable var ?",a:["x = 5;","let x;","var x = 5;"],c:2},
+    {q:"Constante ?",a:["var PI;","let PI;","const PI = 3.14;"],c:2},
+    {q:"Boucle for ?",a:["for(let i=0;i<5;i++)","for i in range(5)","foreach"],c:0},
+    {q:"Comparer égal ?",a:["==","===","="],c:1},
+    {q:"Fonction ?",a:["def test():","function test(){}","func test()"],c:1},
+    {q:"Console log ?",a:["print()","console.log()","echo()"],c:1},
+    {q:"Type chaîne ?",a:["Int","Boolean","String"],c:2},
+    {q:"Array JS ?",a:["[]","{}","()"],c:0},
+    {q:"Objet JS ?",a:["[]","()","{}"],c:2},
+    {q:"DOM ?",a:["Database Object Model","Document Object Model","Dynamic Object Model"],c:1},
+    {q:"Event click ?",a:["onclick()","click()","addEventListener('click')"],c:2},
+    {q:"Type nombre ?",a:["Int","String","Number"],c:2},
+    {q:"Booléen vrai ?",a:["false","true","1"],c:1},
+    {q:"NaN signifie ?",a:["Number","Not a Number","Null"],c:1},
+    {q:"Fonction fléchée ?",a:["()=>{}","function(){}","def"],c:0}
+  ],
+  "HTML":[
+    {q:"Que signifie HTML ?",a:["Home Tool","Hyper Text Markup Language","High Text"],c:1},
+    {q:"Balise image ?",a:["<p>","<img>","<div>"],c:1},
+    {q:"Balise lien ?",a:["<link>","<p>","<a>"],c:2},
+    {q:"Balise liste non ordonnée ?",a:["<ol>","<li>","<ul>"],c:2},
+    {q:"Balise titre ?",a:["<title>","<header>","<h1>"],c:2},
+    {q:"Balise tableau ?",a:["<tab>","<table>","<tr>"],c:1},
+    {q:"Balise cellule ?",a:["<th>","<td>","<cell>"],c:1},
+    {q:"Balise formulaire ?",a:["<form>","<input>","<label>"],c:0},
+    {q:"Balise paragraphe ?",a:["<p>","<para>","<text>"],c:0},
+    {q:"Balise commentaire ?",a:["//","<!-- -->","/* */"],c:1},
+    {q:"Balise bouton ?",a:["<btn>","<input>","<button>"],c:2},
+    {q:"Balise section ?",a:["<div>","<article>","<section>"],c:2},
+    {q:"Balise header ?",a:["<header>","<head>","<h1>"],c:0},
+    {q:"Balise footer ?",a:["<footer>","<foot>","<end>"],c:0},
+    {q:"Balise audio ?",a:["<sound>","<audio>","<music>"],c:1},
+    {q:"Balise vidéo ?",a:["<video>","<media>","<film>"],c:0},
+    {q:"Balise meta ?",a:["<head>","<link>","<meta>"],c:2},
+    {q:"Balise script ?",a:["<script>","<js>","<code>"],c:0},
+    {q:"Balise style ?",a:["<css>","<style>","<link>"],c:1},
+    {q:"Balise liste ordonnée ?",a:["<ul>","<li>","<ol>"],c:2}
+  ],
+   "POO":[
+    {q:"Qu’est-ce que l’encapsulation en POO ?",a:["Le fait de créer plusieurs objets","Le regroupement des données et des méthodes dans une classe avec contrôle d’accès","L’héritage entre plusieurs classes"],c:1},
+    {q:"Une classe est :",a:["Un objet","Un modèle pour créer des objets","Une méthode"],c:1},
+    {q:"L’héritage permet :",a:["De créer une classe à partir d’une autre","D’empêcher la modification d’une classe","De supprimer une classe"],c:0},
+    {q:"Le polymorphisme permet :",a:["D’avoir plusieurs classes identiques","De créer plusieurs objets","D’utiliser une même méthode avec des comportements différents"],c:2},
+    {q:"Une méthode abstraite :",a:["N’a pas d’implémentation","Est privée","Est toujours statique"],c:0},
+    {q:"Quel est le principal avantage de la POO ?",a:["Réduction de la mémoire;","Suppression des erreurs;","Organisation du code autour des objets;"],c:2},
+    {q:"Les quatre principes fondamentaux de la POO sont :",a:["Classe, Objet, Variable, Boucle;","Interface, Package, Classe, Méthode;","Encapsulation, Héritage, Polymorphisme, Abstraction;"],c:2},
+    {q:"L’encapsulation consiste à :",a:["Regrouper données et méthodes et contrôler l’accès","Rendre toutes les variables publiques","Copier une classe"],c:0},
+    {q:"Un objet est créé à partir :",a:["D’une méthode","D’une variable","D’une classe"],c:2},
+    {q:"Quelle méthode est appelée automatiquement lors de la création d’un objet ?",a:["start","init","main"],c:1},
+    {q:"Que représente self dans une classe Python ?",a:["La classe elle-même","Une variable globale","L’instance courante de la classe"],c:2},
+    {q:"Comment créer un objet de la classe Personne ?",a:["Personne.create()","new Personne()","Personne()"],c:2},
+    {q:"Comment hériter d’une classe Animal ?",a:["class Chien(Animal):","class Chien extends Animal:","class Chien inherits Animal:"],c:0},
+    {q:"Une méthode décorée avec @classmethod reçoit :",a:["self","obj","cls"],c:2},
+    {q:"Quel est le rôle du constructeur ?",a:["Empêcher l’héritage","Initialiser les attributs d’un objet lors de sa création","Supprimer un objet"],c:1},
+    {q:"L’abstraction consiste à :",a:["Montrer tous les détails internes","Cacher les détails inutiles et montrer l’essentie","Supprimer les attributs"],c:1},
+    {q:"Pourquoi utilise-t-on le modificateur private ?",a:["Pour protéger les données d’une classe","Pour rendre une donnée accessible partout","Pour accélérer le programme"],c:0},
+    {q:"Lorsqu’une méthode d’une classe fille a la même signature que celle de la classe mère, on parle de :",a:["Encapsulation","Surcharge (overloading)","Redéfinition (overriding)"],c:2},
+    {q:"Que permet l’interface (ou protocole) dans certains langages orientés objet ?",a:["Définir un contrat que les classes doivent respecter","Empêcher l’héritage","Créer directement un objet"],c:0},
+    {q:"Que fait la redéfinition (overriding) d’une méthode ?",a:["Permet à une classe fille de modifier le comportement d’une méthode héritée","Supprime la méthode de la classe parent","Rend la méthode statique"],c:0}
+  ],
+  "Python":[
+    {q:"Extension Python ?",a:[".py",".html",".js"],c:0},
+    {q:"Afficher ?",a:["echo()","print()","alert()"],c:1},
+    {q:"Pour commentaire ?",a:["// commentaire","<!-- -->","# commentaire"],c:2},
+    {q:"Fonction longueur ?",a:["len()","length()","size()"],c:0},
+    {q:"Boucle for ?",a:["for(i=0;i<5;i++)","for i in range(5):","foreach"],c:1},
+    {q:"Variable globale ?",a:["var x","let x","global x"],c:2},
+    {q:"Condition IF ?",a:["if","switch","for"],c:0},
+    {q:"True en Python ?",a:["true","True","1"],c:1},
+    {q:"Type chaîne ?",a:["string","char","str"],c:2},
+    {q:"Type entier ?",a:["int","integer","num"],c:0},
+    {q:"Opérateur égal ?",a:["==","=","==="],c:0},
+    {q:"Liste Python ?",a:["{}","[]","()"],c:1},
+    {q:"Dictionnaire ?",a:["[]","{}","()"],c:1},
+    {q:"Importer module ?",a:["include math","require math","import math"],c:2},
+    {q:"Fonction lambda ?",a:["def lambda():","function lambda()","lambda x: x+1"],c:2},
+    {q:"Boucle while ?",a:["while condition:","while(){ }","loop while"],c:0},
+    {q:"Exception ?",a:["catch","try/except","throw"],c:1},
+    {q:"Classe Python ?",a:["function MyClass","class MyClass:","class(): "],c:1},
+    {q:"Méthode init ?",a:["__init__","init()","constructor"],c:0},
+    {q:"Module sys ?",a:["include sys","require sys","import sys"],c:2}
+  ],
+  "CSS":[
+    {q:"CSS sert à ?",a:["Programmer","Compiler","Styliser"],c:2},
+    {q:"Changer couleur ?",a:["color","font","script"],c:0},
+    {q:"Police texte ?",a:["font-style","font-family","text-style"],c:1},
+    {q:"Fond page ?",a:["color","background-color","bgcolor"],c:1},
+    {q:"Aligner texte ?",a:["text-align","align","position"],c:0},
+    {q:"Bordure ?",a:["border-style","border-color","border"],c:2},
+    {q:"Marge ?",a:["padding","space","margin"],c:2},
+    {q:"Padding ?",a:["margin","space","padding"],c:2},
+    {q:"Flexbox container ?",a:["flex:container","box-flex","display:flex"],c:2},
+    {q:"Grid container ?",a:["grid-container","display:grid","grid:box"],c:1},
+    {q:"Texte gras ?",a:["text:bold","font-weight:bold","weight:bold"],c:1},
+    {q:"Texte italique ?",a:["text-style:italic","font-style:italic","style:italic"],c:1},
+    {q:"Aligner horizontal ?",a:["justify-content","align-items","align-content"],c:0},
+    {q:"Aligner عمودي ?",a:["justify-content","align-items","align-self"],c:1},
+    {q:"Overflow ?",a:["scroll:auto","overflow:auto","hidden:auto"],c:1},
+    {q:"Opacité ?",a:["transparent","alpha","opacity"],c:2},
+    {q:"Position relative ?",a:["relative","absolute","fixed"],c:0},
+    {q:"Position absolute ?",a:["absolute","relative","fixed"],c:0},
+    {q:"Z-index ?",a:["z-order","index","z-index"],c:2}
+  ],
+  "PHP":[
+    {q:"PHP est ?",a:["Serveur","Client","Design"],c:0},
+    {q:"Afficher en PHP ?",a:["echo","printJS","alert"],c:0},
+    {q:"Variable en PHP ?",a:["var","$var","let"],c:1},
+    {q:"Concaténer ?",a:["+",".","&"],c:1},
+    {q:"Début script ?",a:["<script>","<php>","<?php"],c:2},
+    {q:"Commentaire ligne ?",a:["# commentaire","/* */","// commentaire"],c:2},
+    {q:"Boucle for ?",a:["foreach","for($i=0;$i<5;$i++)","while"],c:1},
+    {q:"Boucle foreach ?",a:["for","foreach($arr as $val)","while"],c:1},
+    {q:"Condition IF ?",a:["if()","while","for"],c:0},
+    {q:"Condition ELSE ?",a:["else","elseif","elif"],c:0},
+    {q:"Array PHP ?",a:["array()","[]","{}"],c:0},
+    {q:"Fonction strlen ?",a:["length()","size()","strlen()"],c:2},
+    {q:"Include fichier ?",a:["include","require","import"],c:0},
+    {q:"Constante ?",a:["const","define()","var"],c:1},
+    {q:"Superglobal $_GET ?",a:["$_POST","$_SESSION","$_GET"],c:2},
+    {q:"Superglobal $_POST ?",a:["$_GET","$_POST","$_SESSION"],c:1},
+    {q:"Superglobal $_SESSION ?",a:["$_POST","$_SESSION","$_GET"],c:1},
+    {q:"Opérateur égal ?",a:["==","=","==="],c:0},
+    {q:"Fonction isset ?",a:["empty()","isset()","exist()"],c:1},
+    {q:"Fonction array_push ?",a:["array_push()","push()","add()"],c:0}
+  ]
+};
+/*L'utilisateur a sélectionné une langue et un numéro.
+Nous avons récupéré les questions de langue depuis la base de données.
+Nous avons extrait uniquement le nombre de questions requis.
+Nous les avons intégrées au questionnaire.
+Nous avons commencé par la question 0.
+Le score initial était de 0.*/
+/*المستخدم اختار لغة وعدد.
+ أخذنا أسئلة اللغة من db.
+ أخذنا منها فقط العدد المطلوب.
+ خزناها في quiz.
+ بدأنا من السؤال 0.
+ بدأنا النقاط من 0*/
+let quiz=db[cat].slice(0,num);
+let i=0,score=0;
+function load(){
+  //Le bouton Suivant disparaît et ne réapparaît qu'après la sélection d'une nouvelle réponse.
+  //زر Next يختفي لا يظهر إلا بعد اختيار إجابة جديدة
+ document.getElementById("next").style.display="none";
+ //Effacer les boutons de réponse précédents prépare l'espace pour les réponses à la nouvelle question.
+ //مسح أزرار الإجابة السابقة تجهيز المكان لإجابات السؤال الجديد.
+ document.getElementById("answers").innerHTML="";
+ /*Un utilisateur répond à des questions.
+i s'incrémente.
+La fin est atteinte.
+La condition est remplie.
+Le résultat s'affiche.
+Le code s'arrête.*/
+/*لمستخدم يجيب على الأسئلة.
+ i يزيد.
+ يصل للنهاية.
+ الشرط يتحقق.
+ يتم عرض النتيجة.
+ يتم إيقاف الكود.*/
+ if(i>=quiz.length){
+  let percent = Math.round((score / quiz.length) * 100);
+  // 🔥 تحويل اسم اللغة ل key صحيح
+  let key = cat.toLowerCase();
+  if(key === "javascript") key = "js";
+  if(key === "c++") key = "cpp";
+  // 🔥 تخزين النتيجة
+  localStorage.setItem(key, percent);
+  document.querySelector(".quiz").innerHTML = `
+    <h2>Votre score : ${score} / ${quiz.length}</h2>
+    <h3>${percent}% 🎯</h3>
+    <br><br>
+    <button onclick="goProfile()">
+        Voir My Skills 🚀
+    </button>
+  `;
+  return;
+}
+ let q=quiz[i];
+ /*Le texte de la question apparaît à l'utilisateur
+  يظهر نص السؤال للمستخدم*/
+ document.getElementById("q").innerText=q.q;
+/*Nous récupérons la question actuelle.
+Nous affichons son texte.
+Nous parcourons ses options.
+Nous créons un bouton pour chaque option.
+Nous l'associons à une fonction de vérification.
+Nous l'ajoutons à la page.*/
+/*نأخذ السؤال الحالي.
+ نعرض نصه.
+ نمر على خياراته.
+ننشئ زرًا لكل خيار.
+ نربطه بدالة check.
+نضيفه للصفحة.*/
+ q.a.forEach((x,j)=>{
+  let b=document.createElement("button");
+  b.className="answer";
+  b.innerText=x;
+  b.onclick=()=>check(j);
+  answers.appendChild(b);
+ });
+}
+/*L'utilisateur clique sur une réponse.
+Les boutons cessent de fonctionner.
+Les réponses correctes apparaissent en vert, les réponses incorrectes en rouge.
+Si la réponse est correcte, un point est ajouté.
+Le bouton  Suivant  apparaît pour passer à la question suivante.
+Cliquer sur  Suivant  affiche la question suivante.*/
+/*المستخدم يضغط على إجابة.
+ تتوقف الأزرار عن العمل .
+ تظهر الإجابة الصحيحة بالأخضر والخاطئة بالأحمر.
+ إذا كانت الإجابة صحيحة، يتم إضافة نقطة.
+ يظهر زر Next للانتقال للسؤال التالي.
+ عند الضغط على Next، يظهر السؤال التالي*/
+function check(j){
+ let good=quiz[i].c;
+ document.querySelectorAll(".answer").forEach((b,k)=>{
+  b.disabled=true;
+  if(k==good)b.classList.add("correct");
+  if(k==j && j!=good)b.classList.add("wrong");
+ });
+ if(j==good)score++;
+ next.style.display="block";
+}
+next.onclick=()=>{i++;load();};
+load();
+</script>
+</body>
+</html>

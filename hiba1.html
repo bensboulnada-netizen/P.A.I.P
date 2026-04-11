@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription</title>
+    <style>
+        /* 🌈 BACKGROUND IMAGE MODERNE */
+        body{
+            margin:0;
+            padding:0;
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            font-family:Poppins;
+            background:url("background.jpeg") no-repeat center center/cover;
+            color:white;
+        }
+        /* 🌫️ DARK OVERLAY */
+        body::before{
+            content:"";
+            position:absolute;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background:rgba(0,0,0,0.55);
+            z-index:0;
+        }
+        /* 🖼️ LOGO SIDE */
+        .logo{
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            width: 120px;
+            height: 120px;
+            border-radius:50%;
+            box-shadow:0 0 15px rgb(169, 232, 247);
+            z-index:999;
+        }
+        /* 🏷️ LOGO TEXT */
+        .logo-text{
+            position: fixed;
+            top: 160px;
+            left: 30px;
+            color:#38BDF8;
+            font-weight:bold;
+            font-size:18px;
+            text-align:center;
+            z-index:999;
+        }
+        /* 📦 CONTAINER GLASS */
+        .container{
+            position:relative;
+            z-index:1;
+            background:rgba(255,255,255,0.08);
+            padding:30px;
+            border-radius:20px;
+            width:400px;
+            backdrop-filter:blur(15px);
+            -webkit-backdrop-filter:blur(15px);
+            border:1px solid rgba(255,255,255,0.2);
+            box-shadow:0 0 30px rgba(0,0,0,0.6);
+        }
+        h2{
+            text-align:center;
+            margin-bottom:20px;
+            color:#38BDF8;
+            letter-spacing:1px;
+        }
+        input, select{
+            width:100%;
+            padding:12px;
+            margin:8px 0;
+            border:none;
+            border-radius:10px;
+            outline:none;
+            background:rgba(15,23,42,0.7);
+            color:white;
+        }
+        input:focus, select:focus{
+            border:1px solid #38BDF8;
+            box-shadow:0 0 10px #38BDF8;
+        }
+        /* 👨‍👩‍👧 GENDER */
+        .gender-modern{
+            display:flex;
+            gap:10px;
+            margin:10px 0;
+        }
+        .gender-card{
+            flex:1;
+            padding:12px;
+            text-align:center;
+            border-radius:10px;
+            background:rgba(15,23,42,0.7);
+            cursor:pointer;
+            transition:0.3s;
+        }   
+        .gender-card:hover{
+            transform:scale(1.05);
+            background:rgba(56,189,248,0.2);
+        }
+        .gender-card.active{
+            border:1px solid #38BDF8;
+            background:rgba(56,189,248,0.25);
+        }
+        /* 🔐 PASSWORD */
+        .password-box{
+            position:relative;
+        }
+        .password-box span{
+            position:absolute;
+            right:10px;
+            top:50%;
+            transform:translateY(-50%);
+            cursor:pointer;
+        }
+        /* 📅 DATE */
+        .date-box{
+            position:relative;
+        }
+        .date-box span{
+            position:absolute;
+            right:10px;
+            top:50%;
+            transform:translateY(-50%);
+            cursor:pointer;
+        }
+        /* 🚀 BUTTON */
+        button{
+            width:100%;
+            padding:12px;
+            margin-top:15px;
+            background:linear-gradient(45deg,#38BDF8,#6366F1);
+            border:none;
+            border-radius:12px;
+            color:white;
+            font-weight:bold;
+            cursor:pointer;
+            transition:0.3s;
+        }
+        button:hover{
+            transform:scale(1.05);
+            box-shadow:0 0 15px #38BDF8;
+        }
+    </style>
+</head>
+<body>
+    <!-- 🖼️ LOGO -->
+    <img src="logo.jpg" class="logo" alt="Logo">
+    <div class="logo-text">P.A.I.PR</div>
+    <div class="container">
+        <h2>📝 Créer un compte</h2>
+        <input type="text" id="nom" placeholder="Nom">
+        <input type="tel" id="tel" placeholder="Téléphone">
+        <input type="email" id="email" placeholder="Email">
+        <select id="age">
+            <option value="">Choisir âge</option>
+            <script>
+                for(let i=10;i<=100;i++){
+                    document.write(`<option value="${i}">${i}</option>`);
+                }
+            </script>
+        </select>
+        <div class="date-box">
+        <input type="date" id="birth">
+        <span onclick="openDate()">📅</span>
+    </div>
+    <div class="gender-modern">
+        <div class="gender-card" onclick="setGender(this,'Homme')">👨 Homme</div>
+        <div class="gender-card" onclick="setGender(this,'Femme')">👩 Femme</div>
+    </div>
+    <input type="hidden" id="genre">
+    <!-- 🌍 COUNTRIES -->
+    <select id="pays">
+        <option value="">🌍 Choisir pays</option>
+        <option>🇲🇦 Morocco</option>
+        <option>🇩🇿 Algeria</option>
+        <option>🇹🇳 Tunisia</option>
+        <option>🇪🇬 Egypt</option>
+        <option>🇱🇾 Libya</option>
+        <option>🇸🇦 Saudi Arabia</option>
+        <option>🇦🇪 UAE</option>
+        <option>🇶🇦 Qatar</option>
+        <option>🇰🇼 Kuwait</option>
+        <option>🇴🇲 Oman</option>
+        <option>🇧🇭 Bahrain</option>
+        <option>🇯🇴 Jordan</option>
+        <option>🇱🇧 Lebanon</option>
+        <option>🇸🇾 Syria</option>
+        <option>🇮🇶 Iraq</option>
+        <option>🇾🇪 Yemen</option>
+        <option>🇫🇷 France</option>
+        <option>🇪🇸 Spain</option>
+        <option>🇮🇹 Italy</option>
+        <option>🇩🇪 Germany</option>
+        <option>🇬🇧 United Kingdom</option>
+        <option>🇳🇱 Netherlands</option>
+        <option>🇧🇪 Belgium</option>
+        <option>🇨🇭 Switzerland</option>
+        <option>🇵🇹 Portugal</option>
+        <option>🇺🇸 United States</option>
+        <option>🇨🇦 Canada</option>
+        <option>🇧🇷 Brazil</option>
+        <option>🇦🇷 Argentina</option>
+        <option>🇲🇽 Mexico</option>
+        <option>🇮🇳 India</option>
+        <option>🇨🇳 China</option>
+        <option>🇯🇵 Japan</option>
+        <option>🇰🇷 South Korea</option>
+        <option>🇮🇩 Indonesia</option>
+        <option>🇲🇾 Malaysia</option>
+        <option>🇦🇺 Australia</option>
+        <option>🇳🇿 New Zealand</option>
+        <option>🇷🇺 Russia</option>
+        <option>🇹🇷 Turkey</option>
+        <option>🇿🇦 South Africa</option>
+        <option>🇳🇬 Nigeria</option>
+        <option>🇸🇳 Senegal</option>
+    </select>
+    <div class="password-box">
+        <input type="password" id="pass" placeholder="Mot de passe">
+        <span onclick="togglePassword('pass', this)">👁️</span>
+    </div>
+    <div class="password-box">
+        <input type="password" id="confirm" placeholder="Confirmer mot de passe">
+        <span onclick="togglePassword('confirm', this)">👁️</span>
+    </div>
+        <button onclick="register()">S'inscrire</button>
+    </div>
+    <!-- 🔴 JS (inchangé) -->
+    <script>
+        function openDate(){
+            const dateInput = document.getElementById("birth");
+            if(dateInput.showPicker){
+                dateInput.showPicker();
+            } else {
+                dateInput.focus();
+            }
+        }
+        function togglePassword(id, icon){
+            var input = document.getElementById(id);
+            if(input.type === "password"){
+                input.type = "text";
+                icon.innerHTML = "🚫👁️";
+            } else {
+                input.type = "password";
+                icon.innerHTML = "👁️";
+            }
+        }
+        function setGender(el, value){
+            document.querySelectorAll(".gender-card").forEach(c=>{
+                c.classList.remove("active");
+            });
+            el.classList.add("active");
+                document.getElementById("genre").value = value;
+        }
+        function isStrongPassword(password){
+            if(password.length < 6) return false;
+            let hasLetter = /[a-zA-Z]/.test(password);
+            let hasNumber = /[0-9]/.test(password);
+            let hasSymbol = /[!@#$%^&*(),.?":{}|<>_\-+=/\\[\]]/.test(password);
+            return hasLetter && hasNumber && hasSymbol;
+        }
+        function register(){
+            var nom = document.getElementById("nom").value.trim();
+            var tel = document.getElementById("tel").value.trim();
+            var email = document.getElementById("email").value.trim();
+            var age = document.getElementById("age").value;
+            var birth = document.getElementById("birth").value;
+            var genre = document.getElementById("genre").value;
+            var pays = document.getElementById("pays").value;
+            var pass = document.getElementById("pass").value.trim();
+            var confirm = document.getElementById("confirm").value.trim();
+            // 1. check empty
+            if(
+                nom === "" || tel === "" || email === "" ||
+                age === "" || birth === "" || genre === "" ||
+                pays === "" || pass === "" || confirm === ""
+            ){
+                alert("❌ remplir tous les champs");
+                return;
+            }
+            // 2. check password
+            if(pass !== confirm){
+                alert("❌ mot de passe non confirmé");
+                return;
+            }
+            // 3. get users safely
+            var users = JSON.parse(localStorage.getItem("users")) || [];
+            // 4. FIX SAFE CHECK (important)
+            var exist = users.some(function(u){
+                return typeof u.nom === "string" &&
+                u.nom.trim().toLowerCase() === nom.toLowerCase();
+            });
+            if(exist){
+                alert("❌ utilisateur existe déjà");
+                return;
+            }
+            // 5. save user
+            users.push({
+                nom: nom,
+                tel: tel,
+                email: email,
+                pass: pass
+            });
+            localStorage.setItem("users", JSON.stringify(users));
+            alert("✅ inscription réussie");
+            // 6. redirect
+            window.location.href = "hiba.html";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>AI Assistant</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    background: linear-gradient(135deg, #d9e6f5, #f0e7fc, #fde4f3);
+    font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    overflow-x: hidden;
+  }
+  /* navbar subtle */
+  .navbar-custom {
+    background: #5f4b8b !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .navbar-brand {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  /* main container : centrer l'assistant */
+  .assistant-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  /* carte principale : couleur légèrement différente (lavande douce avec bord frais) */
+  .ai-card {
+    background: #fffef7;
+    background: linear-gradient(145deg, #ffffff 0%, #faf3ff 100%);
+    border-radius: 2rem;
+    box-shadow: 0 20px 35px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(156, 39, 176, 0.15);
+    transition: all 0.2s ease;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    backdrop-filter: blur(0px);
+    border: 1px solid rgba(142, 68, 173, 0.3);
+  }
+  /* tête de carte */
+  .card-header-custom {
+    background: rgba(142, 68, 173, 0.08);
+    border-bottom: 1px solid #e2d0f5;
+    padding: 1rem 1.5rem;
+    border-radius: 2rem 2rem 0 0;
+  }
+  /* zone chat : hauteur fixe + scroll — empêche l'agrandissement de la page */
+  .chat-scroll-area {
+    height: 420px;
+    overflow-y: auto;
+    padding: 1rem 1rem 0.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    scroll-behavior: smooth;
+  }
+  /* messages */
+  .ai-msg, .user-msg {
+    max-width: 92%;
+    padding: 12px 16px;
+    border-radius: 24px;
+    line-height: 1.45;
+    animation: fadeSlideUp 0.2s ease;
+  }
+  .ai-msg {
+    background: #ede2f7;
+    background: linear-gradient(115deg, #f3e9ff 0%, #e9dcfd 100%);
+    align-self: flex-start;
+    border-bottom-left-radius: 8px;
+    color: #2c1a3a;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    border-left: 4px solid #aa6fe5;
+  }
+  .user-msg {
+    background: #d9c8fc;
+    background: #cbb2fe;
+    color: #1e102b;
+    align-self: flex-end;
+    border-bottom-right-radius: 8px;
+    text-align: right;
+    font-weight: 500;
+  }
+  .ai-msg strong, .user-msg strong {
+    font-weight: 700;
+  }
+  pre {
+    background: #2d2a3a;
+    color: #f5eefc;
+    padding: 12px;
+    border-radius: 18px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    margin: 12px 0 8px 0;
+    border-left: 4px solid #b77ef0;
+  }
+  .lang-img {
+    width: 58px;
+    margin: 8px 0 5px 0;
+    animation: floatSoft 2s infinite alternate;
+    border-radius: 20px;
+    background: white;
+    padding: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  @keyframes floatSoft {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-6px); }
+  }
+  /* boutons langue actifs */
+  .lang-btn {
+    background: #e9deff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 40px;
+    margin: 0 6px 6px 0;
+    transition: 0.2s;
+    font-weight: 500;
+  }
+  .lang-btn.active {
+    background: #8e44ad;
+    color: white;
+    box-shadow: 0 2px 8px #b77ef0;
+  }
+  .btn-send {
+    background: #8e44ad;
+    border: none;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 40px;
+    transition: 0.15s linear;
+  }
+  .btn-send:hover {
+    background: #9b59b6;
+    transform: scale(0.97);
+  }
+  .btn-reset {
+    background: #ffb86b;
+    color: #2c1e3a;
+    border: none;
+    border-radius: 40px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .btn-reset:hover {
+    background: #ffa44b;
+  }
+  /* effet burst */
+  .effect {
+    position: fixed;
+    font-size: 28px;
+    pointer-events: none;
+    animation: burstFly 1.2s ease-out forwards;
+    z-index: 9999;
+  }
+  @keyframes burstFly {
+    0% { transform: scale(0.3) rotate(0deg); opacity: 1; }
+    100% { transform: translate(var(--x), var(--y)) scale(1.3) rotate(20deg); opacity: 0; }
+  }
+  /* couleurs spécifiques */
+  .html { color:#e44d26; font-weight:500; }
+  .css { color:#2196f3; }
+  .js { color:#f7df1e; text-shadow: 0 0 1px black; }
+  .python { color:#4CAF50; }
+  .php { color:#8892be; }
+  .cpp { color:#00599c; }
+  .csharp { color:#9c27b0; }
+  .c { color:#607d8b; }
+  /* definitions & code extras */
+  .definition-text {
+    background: #faf5ff;
+    padding: 8px 12px;
+    border-radius: 20px;
+    margin: 8px 0;
+    font-size: 0.95rem;
+  }
+  hr {
+    background-color: #d9c2f0;
+  }
+  /* scrollbar stylée */
+  .chat-scroll-area::-webkit-scrollbar {
+    width: 6px;
+  }
+  .chat-scroll-area::-webkit-scrollbar-track {
+    background: #f0e3ff;
+    border-radius: 10px;
+  }
+  .chat-scroll-area::-webkit-scrollbar-thumb {
+    background: #aa6fe5;
+    border-radius: 10px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-custom">
+  <div class="container">
+    <span class="navbar-brand text-white"><i class="fas fa-robot me-2"></i> AI ASSISTANT. this ai aswers your programming questions </span>
+    <div class="d-flex gap-2">
+      <span class="text-white-50 small"><i class="fas fa-star-of-life"></i> version: <span id="xpDisplay">0</span></span>
+    </div>
+  </div>
+</nav>
+
+<div class="assistant-wrapper">
+  <div class="ai-card">
+    <div class="card-header-custom d-flex flex-wrap justify-content-between align-items-center">
+      <div>
+        <i class="fas fa-graduation-cap" style="color:#8e44ad;"></i> 
+        <strong style="color:#4a2c6d;">AI assistant · تعلم البرمجة</strong>
+      </div>
+      <div class="d-flex gap-2">
+        <button class="btn-reset" id="resetChatBtn" title="العودة للبداية / reset conversation"><i class="fas fa-undo-alt me-1"></i> إعادة البداية</button>
+      </div>
+    </div>
+    
+    <div class="p-3">
+      <!-- language selector -->
+      <div class="mb-2 d-flex flex-wrap">
+        <button class="lang-btn active" onclick="setLang('ar', this)">🇲🇦 عربي</button>
+        <button class="lang-btn" onclick="setLang('fr', this)">🇫🇷 Français</button>
+        <button class="lang-btn" onclick="setLang('en', this)">🇬🇧 English</button>
+      </div>
+      <hr class="mt-0">
+      
+      <!-- zone chat avec hauteur fixe (pas d'agrandissement de page) -->
+      <div id="chatScrollArea" class="chat-scroll-area">
+        <div id="chatBox">
+          <div class="ai-msg"><strong>🤖 AI Mentor:</strong> 👋 Salam! Ahlan bik. اسأل عن أي درس برمجي، سأعطيك التعريف الكامل. <br> ✨ مثلاً: "ما هي الدالة في البرمجة؟" أو "تعريف الـ HTML" أو "C'est quoi une variable ?"</div>
+        </div>
+      </div>
+      
+      <form onsubmit="sendMessage(event)" class="mt-3 d-flex gap-2">
+        <input type="text" id="userInput" class="form-control rounded-pill" placeholder="اسأل عن درس، تعريف، أو لغة برمجة..." style="background:#fefcff;">
+        <button class="btn btn-send"><i class="fas fa-paper-plane"></i> إرسال</button>
+      </form>
+      <div class="small text-muted mt-2 text-center">
+        <i class="fas fa-lightbulb"></i> أطلب تعريف أي مفهوم: variable, fonction, classe, HTML, Python...
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- SYSTEME DE LANGUE ----------
+  let currentLang = "ar";   // ar, fr, en
+  
+  function setLang(lang, btnElement) {
+    currentLang = lang;
+    document.querySelectorAll(".lang-btn").forEach(btn => btn.classList.remove("active"));
+    btnElement.classList.add("active");
+    // optional: notification
+  }
+  
+  // ---------- GESTION XP (localStorage) ----------
+  function updateXpDisplay() {
+    let xp = parseInt(localStorage.getItem("xp")) || 0;
+    document.getElementById("xpDisplay").innerText = xp;
+  }
+  
+  function addXP(amount) {
+    let xp = parseInt(localStorage.getItem("xp")) || 0;
+    xp += amount;
+    localStorage.setItem("xp", xp);
+    updateXpDisplay();
+  }
+  
+  // ---------- DICTIONNAIRE DE DÉFINITIONS (cours, concepts) ----------
+  // support pour les 3 langues : définitions enrichies "leur définition"
+  const definitionsDB = {
+    variable: {
+      ar: "📦 **المتغيّر (Variable):** هو مساحة في الذاكرة تُستخدم لتخزين قيمة يمكن أن تتغير أثناء تنفيذ البرنامج. مثال: `let age = 25;`",
+      fr: "📦 **Variable :** espace mémoire nommé contenant une valeur modifiable. Ex: `int age = 25;`",
+      en: "📦 **Variable:** named storage location in memory that holds a value. Example: `let score = 100;`"
+    },
+    function: {
+      ar: "🔁 **الدالة (Function):** مجموعة من التعليمات البرمجية تؤدي مهمة محددة، يمكن استدعاؤها لإعادة استخدام الكود. مثال: `function greet() { return 'Hello'; }`",
+      fr: "🔁 **Fonction :** bloc de code réutilisable qui exécute une tâche. Ex: `function direBonjour() { ... }`",
+      en: "🔁 **Function:** reusable block of code designed to perform a particular task. Example: `function add(a,b) { return a+b; }`"
+    },
+    loop: {
+      ar: "🔄 **الحلقة (Loop):** هيكل برمجي لتكرار تنفيذ كود عدة مرات (for, while). مثال: `for(let i=0;i<5;i++)`",
+      fr: "🔄 **Boucle :** structure qui répète un bloc d'instructions. Ex: `for i in range(5):`",
+      en: "🔄 **Loop:** control structure that repeats a block of code. Example: `while(condition){}`"
+    },
+    array: {
+      ar: "🗂️ **المصفوفة (Array):** بنية بيانات تخزن قائمة من العناصر (أرقام، نصوص، ...) ويمكن الوصول إليها عبر index. مثال: `let fruits = ['pomme', 'banane'];`",
+      fr: "🗂️ **Tableau :** collection ordonnée d'éléments indexés. Ex: `let tab = [1,2,3];`",
+      en: "🗂️ **Array:** ordered list of elements accessed by index. Example: `const colors = ['red','blue'];`"
+    },
+    class: {
+      ar: "🏛️ **الكلاس (Class):** قالب لإنشاء كائنات، يجمع بين البيانات والدوال (البرمجة كائنية التوجه). مثال: `class Car { constructor(brand) {...} }`",
+      fr: "🏛️ **Classe :** modèle orienté objet définissant des propriétés et méthodes. Ex: `class Voiture {}`",
+      en: "🏛️ **Class:** blueprint for creating objects with properties and methods. Example: `class Animal {}`"
+    },
+    object: {
+      ar: "🧩 **الكائن (Object):** كيان يحتوي على خصائص وقيم (key-value). مثال: `let user = {name:'Ali', age:20};`",
+      fr: "🧩 **Objet :** structure contenant des paires clé-valeur. Ex: `let personne = {prenom:'Sofia'}`",
+      en: "🧩 **Object:** collection of key-value pairs. Example: `{ model: 'Tesla' }`"
+    },
+    html: {
+      ar: "🌐 **HTML:** لغة توصيف النصوص (HyperText Markup Language) لهيكلة محتوى صفحات الويب باستخدام عناصر مثل `<div>`, `<h1>`.",
+      fr: "🌐 **HTML:** langage de balisage standard pour créer la structure des pages web.",
+      en: "🌐 **HTML:** standard markup language for creating web page structure."
+    },
+    css: {
+      ar: "🎨 **CSS:** لغة تنسيق لتزيين صفحات الويب (الألوان، الخطوط، التخطيط).",
+      fr: "🎨 **CSS:** feuilles de style en cascade pour le design et la mise en page.",
+      en: "🎨 **CSS:** cascading style sheets for styling web documents."
+    },
+    javascript: {
+      ar: "⚡ **JavaScript:** لغة برمجة تجعل المواقع تفاعلية (معالجة الأحداث، DOM، AJAX).",
+      fr: "⚡ **JavaScript:** langage de script pour l'interactivité web.",
+      en: "⚡ **JavaScript:** dynamic scripting language for web interactivity."
+    },
+    python: {
+      ar: "🐍 **Python:** لغة عالية المستوى، سهلة التعلم، تستخدم في الذكاء الاصطناعي والويب.",
+      fr: "🐍 **Python:** langage polyvalent, lisible, idéal pour data science.",
+      en: "🐍 **Python:** high-level, readable language for AI, backend, and scripting."
+    },
+    php: {
+      ar: "🌍 **PHP:** لغة برمجة نصية من جهة الخادم (back-end) لتطوير الويب الديناميكي.",
+      fr: "🌍 **PHP:** langage côté serveur pour créer des sites web dynamiques.",
+      en: "🌍 **PHP:** server-side scripting language for web development."
+    },
+    poo: {
+      ar: "🌍 **poo:** هي طريقة للبرمجة تعتمد على إنشاء كائنات تحتوي على بيانات و أفعال.",
+      fr: "🌍 **poo:** c’est une façon de programmer en créant des objets qui ont des données et des actions.",
+      en: "🌍 **poo:** is a way of programming by creating objects that have data and actions."
+    },
+    cpp: {
+      ar: "💻 **C++:** لغة برمجة قوية عالية الأداء تستخدم في الألعاب والأنظمة.",
+      fr: "💻 **C++:** langage performant pour logiciels complexes et jeux.",
+      en: "💻 **C++:** high-performance language used in systems/game development."
+    },
+    csharp: {
+      ar: "🟣 **C#:** لغة تطوير من مايكروسوفت، تستخدم مع .NET وتطبيقات Unity.",
+      fr: "🟣 **C#:** langage moderne pour applications Windows et jeux Unity.",
+      en: "🟣 **C#:** modern Microsoft language for .NET and game dev."
+    },
+    algorithm: {
+      ar: "📐 **الخوارزمية (Algorithm):** مجموعة من الخطوات المنطقية لحل مشكلة معينة، أساس البرمجة.",
+      fr: "📐 **Algorithme:** suite finie d'instructions pour résoudre un problème.",
+      en: "📐 **Algorithm:** finite sequence of steps to solve a problem."
+    }
+  };
+  
+  // synonyms pour détection de concept (recherche souple)
+  const conceptSynonyms = {
+    "متغير": "variable", "variable": "variable", "var": "variable",
+    "دالة": "function", "fonction": "function", "function": "function",
+    "حلقة": "loop", "boucle": "loop", "loop": "loop",
+    "مصفوفة": "array", "tableau": "array", "array": "array",
+    "كلاس": "class", "classe": "class", "class": "class",
+    "كائن": "object", "objet": "object", "object": "object",
+    "خوارزمية": "algorithm", "algorithme": "algorithm", "algorithm": "algorithm",
+    "البرمجة الكائنية التوجه": "poo", "poo": "poo", "poo": "poo"
+  };
+  
+  // detect definition intent (demande de définition / درس)
+  function isDefinitionQuery(message) {
+    let m = message.toLowerCase();
+    const defKeywords = {
+      ar: ["ما هو", "ما هي", "شرح", "تعريف", "معنى", "درس", "اخبرني عن", "عرف", "ماهو", "ماهي", "i3tini", "dars"],
+      fr: ["c'est quoi", "définition", "explique", "qu'est-ce qu", "c’est quoi", "définir", "donne moi la définition", "leçon"],
+      en: ["what is", "define", "definition", "explain", "meaning", "lesson", "tell me about"]
+    };
+    let keywords = defKeywords[currentLang] || defKeywords.en;
+    return keywords.some(kw => m.includes(kw));
+  }
+  // extraire le sujet (concept) de la question
+  function extractTopicFromQuery(msg) {
+    let lowerMsg = msg.toLowerCase();
+    // check synonyms direct
+    for (let [synonym, conceptKey] of Object.entries(conceptSynonyms)) {
+      if (lowerMsg.includes(synonym)) return conceptKey;
+    }
+    // check les noms de langages / concepts intégrés
+    const allTopics = Object.keys(definitionsDB);
+    for (let topic of allTopics) {
+      if (lowerMsg.includes(topic)) return topic;
+      if (topic === "javascript" && (lowerMsg.includes("js") || lowerMsg.includes("java script"))) return "javascript";
+      if (topic === "cpp" && (lowerMsg.includes("c++") || lowerMsg.includes("cpp"))) return "cpp";
+      if (topic === "csharp" && (lowerMsg.includes("c#") || lowerMsg.includes("csharp"))) return "csharp";
+      if (topic === "html" && lowerMsg.includes("html")) return "html";
+      if (topic === "css" && lowerMsg.includes("css")) return "css";
+      if (topic === "python" && lowerMsg.includes("python")) return "python";
+      if (topic === "php" && lowerMsg.includes("php")) return "php";
+      if (topic === "poo" && lowerMsg.includes("poo")) return "poo";
+      if (topic === "algorithm" && (lowerMsg.includes("algorith") || lowerMsg.includes("algorithm"))) return "algorithm";
+    }
+    return null;
+  }
+  
+  // obtenir la réponse de définition complète
+  function getDefinitionResponse(topic, lang) {
+    if (!topic || !definitionsDB[topic]) return null;
+    let defText = definitionsDB[topic][lang];
+    if (!defText) defText = definitionsDB[topic]["en"]; // fallback english
+    // ajouter un petit exemple ou mise en forme
+    let extra = "";
+    if (topic === "variable") extra = `<div class="definition-text"><i class="fas fa-code"></i> ${lang === 'ar' ? 'مثال: int x = 10;' : lang==='fr' ? 'Exemple: let age = 30;' : 'Example: let name = "AI";'}</div>`;
+    if (topic === "function") extra = `<div class="definition-text">💡 ${lang === 'ar' ? 'مثال: function sum(a,b){ return a+b; }' : 'Ex: function add(a,b) { return a+b; }'}</div>`;
+    return `<div class="definition-text">📘 ${defText}</div>${extra}`;
+  }
+  
+  // ---------- DETECTION DE LANGAGE DE PROGRAMMATION (code & image) ----------
+  function detectProgLang(msg) {
+    let m = msg.toLowerCase();
+    if(m.includes("html")) return "html";
+    if(m.includes("css")) return "css";
+    if(m.includes("javascript")||m.includes("js")) return "js";
+    if(m.includes("python")||m.includes("بايثون")) return "python";
+    if(m.includes("php")) return "php";
+    if(m.includes("poo")) return "poo";
+    if(m.includes("c++")) return "cpp";
+    if(m.includes("c#")) return "csharp";
+    if(m.includes(" c ")) return "c";
+    return null;
+  }
+  
+  function getLanguageImage(lang) {
+    const imgs = {
+      html:"https://cdn-icons-png.flaticon.com/512/732/732212.png",
+      css:"https://cdn-icons-png.flaticon.com/512/732/732190.png",
+      js:"https://cdn-icons-png.flaticon.com/512/5968/5968292.png",
+      python:"https://cdn-icons-png.flaticon.com/512/5968/5968350.png",
+      php:"https://cdn-icons-png.flaticon.com/512/919/919830.png",
+      cpp:"https://cdn-icons-png.flaticon.com/512/6132/6132222.png",
+      csharp:"https://cdn-icons-png.flaticon.com/512/6132/6132221.png",
+      c:"https://cdn-icons-png.flaticon.com/512/6132/6132220.png"
+    };
+    return imgs[lang] || "";
+  }
+  
+  // les infos code snippet pour les langages (contenu pédagogique)
+  const codeSnippets = {
+    html: { code: `<h1>Hello World</h1>\n<p>Structure de base HTML5</p>`, ar:"🌐 HTML: لغة بناء صفحات الويب", fr:"🌐 HTML: structure web", en:"🌐 HTML: web structure" },
+    css: { code: `body {\n  background: linear-gradient(45deg, #8e44ad, #3498db);\n  font-family: sans-serif;\n}`, ar:"🎨 CSS: تصميم وجماليات", fr:"🎨 CSS: feuilles de style", en:"🎨 CSS: styling and design" },
+    js: { code: `console.log("Hello JavaScript!");\ndocument.querySelector('button').onclick = () => alert('Hi');`, ar:"⚡ JS: برمجة تفاعلية", fr:"⚡ JS: interactivité", en:"⚡ JS: interactive front-end" },
+    python: { code: `def greet(name):\n    return f"Hello {name}"\nprint(greet("Monde"))`, ar:"🐍 Python: لغة سهلة وقوية", fr:"🐍 Python: lisible & puissant", en:"🐍 Python: easy & versatile" },
+    php: { code: `<?php\n$message = "Bonjour le monde";\necho $message;\n?>`, ar:"🌍 PHP: back-end dynamique", fr:"🌍 PHP: serveur web", en:"🌍 PHP: server-side scripting" },
+    cpp: { code: `#include <iostream>\nusing namespace std;\nint main() {\n  cout << "C++ puissant";\n  return 0;\n}`, ar:"💻 C++: أداء عالي", fr:"💻 C++: haute performance", en:"💻 C++: high performance" },
+    csharp: { code: `using System;\nclass Program {\n  static void Main() {\n    Console.WriteLine("C# & .NET");\n  }\n}`, ar:"🟣 C#: لغة متعددة الاستخدامات", fr:"🟣 C#: langage moderne", en:"🟣 C#: modern language" },
+    c: { code: `#include <stdio.h>\nint main() {\n  printf("Hello C");\n  return 0;\n}`, ar:"⚙️ C: لغة أساسية قريبة من المعالج", fr:"⚙️ C: langage bas niveau", en:"⚙️ C: low-level powerful" }
+  };
+  
+  function getLanguageResponse(langKey) {
+    if (!langKey || !codeSnippets[langKey]) return null;
+    const snippet = codeSnippets[langKey];
+    let text = currentLang === "ar" ? snippet.ar : (currentLang === "fr" ? snippet.fr : snippet.en);
+    let code = snippet.code;
+    let img = getLanguageImage(langKey);
+    return `<span class="${langKey}" style="font-weight:bold;">${text}</span><br><img src="${img}" class="lang-img" alt="lang"><pre>${escapeHtml(code)}</pre>`;
+  }
+  function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+  // ---------- intelligence centrale ----------
+  function smartReply(userMsg) {
+    let msg = userMsg.trim();
+    // 1) est-ce une demande de définition / cours ?
+    if (isDefinitionQuery(msg)) {
+      let topic = extractTopicFromQuery(msg);
+      if (topic) {
+        let defResponse = getDefinitionResponse(topic, currentLang);
+        if (defResponse) return `<i class="fas fa-graduation-cap"></i> 📖 ${defResponse}`;
+        else return currentLang === "ar" ? "🤖 لم أجد تعريفاً دقيقاً لهذا المفهوم، جرّب: 'ما هي الدالة' أو 'تعريف array'" : (currentLang === "fr" ? "🤖 Définition non trouvée, essayez 'variable' ou 'classe'" : "🤖 Definition not found, try 'function' or 'array'");
+      } else {
+        // fallback si demande définition mais pas de sujet clair
+        return currentLang === "ar" ? "📚 من فضلك اذكر المفهوم الذي تريد تعريفه (مثلاً: متغير، دالة، حلقة، HTML، Python)" : (currentLang === "fr" ? "📚 Veuillez préciser le concept (ex: variable, boucle, classe)" : "📚 Please specify the concept (e.g., variable, loop, class)");
+      }
+    }
+    // 2) detection langage de programmation classique (code + icône)
+    let progLang = detectProgLang(msg);
+    if (progLang) {
+      let response = getLanguageResponse(progLang);
+      if (response) return response;
+    }
+    // 3) réponse générique intelligente
+    if (currentLang === "ar") return "💡 يمكنني مساعدتك في تعريفات البرمجة والدروس. اسأل: 'ما هي الخوارزمية؟' أو 'شرح المصفوفات'";
+    if (currentLang === "fr") return "💡 Je peux vous donner des définitions de cours. Demandez 'c'est quoi une classe' ou 'définition HTML'";
+    return "💡 Ask me for programming definitions: 'what is a loop?', 'define array', or about languages like Python.";
+  }
+  
+  // 💥 تأثيرات الانفجار حسب اللغة أو عادي
+  function createEffect(langCode) {
+    let symbol = "✨";
+    if(langCode === "html") symbol="🌐";
+    else if(langCode === "css") symbol="🎨";
+    else if(langCode === "js") symbol="⚡";
+    else if(langCode === "python") symbol="🐍";
+    else if(langCode === "php") symbol="🌍";
+    else if(langCode === "poo") symbol="🌍";
+    else if(langCode === "cpp") symbol="💻";
+    else if(langCode === "csharp") symbol="🟣";
+    else if(langCode === "c") symbol="⚙️";
+    for(let i=0;i<8;i++){
+      let el=document.createElement("div");
+      el.className="effect";
+      el.innerHTML=symbol;
+      el.style.left=Math.random() * 80 + 10 + "%";
+      el.style.top=Math.random() * 70 + 15 + "%";
+      let rx = (Math.random() - 0.5) * 380;
+      let ry = (Math.random() - 0.5) * 380;
+      el.style.setProperty('--x', rx + "px");
+      el.style.setProperty('--y', ry + "px");
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), 1100);
+    }
+  }
+  
+  // ---------- ENVOI MESSAGE + CHAT FIXE (pas d'agrandissement)----------
+  function sendMessage(e) {
+    e.preventDefault();
+    let inputField = document.getElementById("userInput");
+    let msg = inputField.value.trim();
+    if(msg === "") return;
+    
+    let chatContainer = document.getElementById("chatBox");
+    // user message
+    let userDiv = document.createElement("div");
+    userDiv.className = "user-msg";
+    userDiv.innerHTML = `<strong>👤 أنت / You:</strong> ${escapeHtml(msg)}`;
+    chatContainer.appendChild(userDiv);
+    
+    // récupération réponse
+    let replyHtml = smartReply(msg);
+    let aiDiv = document.createElement("div");
+    aiDiv.className = "ai-msg";
+    aiDiv.innerHTML = `<strong>🤖 AI Mentor:</strong> ${replyHtml}`;
+    chatContainer.appendChild(aiDiv);
+    
+    // Effet burst (detect lang pour fun)
+    let detected = detectProgLang(msg);
+    createEffect(detected || "default");
+    
+    // XP +10 par question
+    addXP(10);
+    
+    inputField.value = "";
+    let scrollDiv = document.getElementById("chatScrollArea");
+    scrollDiv.scrollTop = scrollDiv.scrollHeight;
+  }
+  // RESET CHAT : retour à l'état initial (narja3 lawal)
+  function resetChat() {
+    let chatBox = document.getElementById("chatBox");
+    let initialMsg = currentLang === "ar" ? "🤖 AI Mentor: 👋 مرحبا! اسأل عن أي درس برمجي، سأعطيك التعريف الكامل. <br> ✨ مثلاً: 'ما هي الدالة؟' أو 'تعريف الـ HTML'" :
+                     (currentLang === "fr" ? "🤖 AI Mentor: 👋 Bonjour! Demandez une définition de cours : 'C'est quoi une classe ?' ou 'définition JavaScript'" :
+                     "🤖 AI Mentor: 👋 Hello! Ask for a programming lesson: 'what is a loop?', 'define array'");
+    chatBox.innerHTML = `<div class="ai-msg"><strong>🤖 AI Mentor:</strong> ${initialMsg}</div>`;
+    let scrollDiv = document.getElementById("chatScrollArea");
+    scrollDiv.scrollTop = scrollDiv.scrollHeight;
+  }
+  // initialisation XP & reset button
+  window.onload = function() {
+    updateXpDisplay();
+    addXP(5);  // bonus connexion
+    document.getElementById("resetChatBtn").addEventListener("click", resetChat);
+    // fix: adapt message initial en fonction de la langue par défaut (ar)
+    resetChat();
+  };
+  // adaptation si reset change la langue? mais reset appelle toujours currentLang
+  // améliorer: après changement de langue on peut rafraîchir le message d'accueil? on peut optionnel mais laisser user.
+  function syncInitialLang() {
+    // petit bonus: si chatBox contient seulement le message initial on peut l'actualiser
+    let chatDivs = document.getElementById("chatBox").children;
+    if(chatDivs.length === 1 && chatDivs[0].classList.contains("ai-msg")) {
+      resetChat();
+    }
+  }
+  // override setLang pour mettre à jour le msg d'accueil si nécessaire (optionnel)
+  const originalSetLang = setLang;
+  window.setLang = function(lang, btn) {
+    originalSetLang(lang, btn);
+    syncInitialLang();
+  };
+</script>
+</body>
+</html>

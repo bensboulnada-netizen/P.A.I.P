@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><!--Il permet d'écrire des lettres arabes et françaises sans problème.--><!--يسمح بكتابة الحروف العربية والفرنسية بدون مشاكل.-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><!--Cela rend la page compatible aussi bien avec les téléphones qu'avec les ordinateurs.--><!--يجعل الصفحة مناسبة للهاتف والكمبيوتر.-->
+<title>Quiz Divertissement</title><!--Titre de la page--><!--عنوان الصفحة-->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"><!--Bootstrap-->
+<style>/*CSS*/
+*{ /*Supprimer les espaces*//*يحذف الفراغات*/
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Montserrat",sans-serif;
+}
+body{
+    min-height:100vh; /*La hauteur occupe tout l'écran.*//*الارتفاع يأخذ كامل الشاشة.*/
+    display:flex; /*Fabrique des objets au milieu*/ /*يجعل العناصر في الوسط.*/
+    align-items:center; /*Placez la boîte exactement au milieu.*//*تجعل الصندوق بالوسط تماماً.*/
+    justify-content:center; /*Placez la boîte exactement au milieu.*//*تجعل الصندوق بالوسط تماماً.*/
+    background:url("foto.jpeg") no-repeat center/cover; /*Afficher l'image en arrière-plan*//*اظهار الصوره في الخلف*/
+}
+.config-container{ 
+    width:420px; /*Spécifie la largeur de la boîte*//*تحدد عرض الصندوق*/
+    padding:25px; /*La distance entre les boutons et le texte*//*المسافه بين الازرار والنصوص*/
+    text-align:center; /*Placez le texte et les boutons au centre.*//*جعل نصوص والازرار في الوسط*/
+    background:rgba(160,201,238,.9); /*Coloriez la boîte et rendez-la transparente également.*//*لون الصندوق وجعله ايضا شفاف*/
+    border-radius:12px; /*Arrondissez les coins de la boîte*//*جعل زوايا صندوق مستديره*/
+    box-shadow:0 10px 25px rgba(0,0,0,.3); /*Ajouter une ombre à la boîte*//*اضافه ظل للصندوق*/
+}
+.config-container:hover{
+    transform:scale(1.03);/*Lorsque la souris survole la boîte, celle-ci s'agrandit légèrement.*//*عند مرور الموس على الصندوق يكبر قليلا*/
+}
+.config-title{margin-bottom:15px;}/*Le titre est séparé des éléments situés en dessous afin qu'ils ne soient pas collés les uns aux autres.*//*يفصل العنوان عن العناصر التي تحته حتى لا يلتصقوا.*/
+.config-option{margin-top:25px;}/*Cette partie est séparée de celle qui la précède afin de créer une forme organisée.*//*يبعد هذا الجزء عن الذي فوقه ليكون الشكل منظم*/
+.option-title{margin-bottom:15px;}/*Le petit titre ne reste pas collé aux boutons situés en dessous.*//*العنوان الصغير لا يلتصق بالازرار التي تحته*/
+.category-options, .question-options{
+    display:flex;/*Organisation des boutons*//*تنظيم الازرار*/
+    flex-wrap:wrap;/*Placez les éléments restants sur la deuxième ligne.*//*وضع باقي العناصر في السطر الثاني*/
+    justify-content:center;/*Placez les boutons au milieu de la boîte*//*وضع الازرار وسط الصندوق*/
+    gap:12px;/*Réglez la distance entre chaque bouton*//*جعل المسافه بين كل زر وزر*/
+}
+.category-options button, .question-options button{
+    padding:10px 15px; /*Le bouton devient plus grand et plus agréable à cliquer, et le texte ne colle plus aux bords.*//*لزر يصبح أكبر ومريح للنقر،
+والنص لا يلتصق بالحواف.*/
+    border-radius:6px;/*Ceux qui possèdent des secrets deviennent ronds*//*تصبح ذوي الاسرار مستديره*/
+    border:1px solid #5145ba;/*Forme et couleur du bouton*//*شكل الزر ولونه*/
+    background:#6fb4ef;/*Couleur arrière du bouton*//*لون الخلفي للزر*/
+    cursor:pointer;/*Changez le curseur de la souris en forme de main.*//*تغيير شكل الماوس على شكل اليد*/
+    transition:.3s;/*Les changements comme le survol ou l'activation s'effectuent en douceur en 0,3 seconde au lieu d'être soudains.*//*غيير مثل hover أو active يتم في 0.3 ثانية بسلاسة بدل فجأة*/
+}
+.category-options button:hover, .question-options button:hover{/*hover:C'est-à-dire, lorsque la souris est au-dessus.*//*hover:يعني عندما يكون الماوس فوقه*/
+    background:#dfdafd;/*Changer la couleur de fond au survol de la souris.*//*تغيير لون الخلفية عند المرور بالماوس*/
+}
+.active{
+    background:#403795 !important;/*Un arrière-plan pour le bouton sélectionné*//*ون خلفية الزر المختار*/
+    color:white !important;/*Le texte devient blanc pour qu'il se détache sur le fond sombre.*//*لنص يصبح أبيض حتى يكون واضحًا فوق الخلفية الداكنة.*/
+    border-color:#272166 !important;/*Le cadre devient plus sombre que le fond.*//*الإطار يصبح أغمق من الخلفية*/
+}
+.start-quiz-btn{
+    margin-top:30px;/*La distance entre les boutons restants*//*المسافه بين الازرار الباقيه*/
+    padding:12px 25px;/*Taille du bouton*//*حجم الزر*/
+    border:none;/*Supprimer les bords noirs*//*ازاله الحواف السوداء*/
+    border-radius:8px;/*Les coins sont arrondis*//*الزوايا مستديره*/
+    background:#5145ba;/*Couleur d’arrière-plan du bouton*//*لون خلفية الزر*/
+    color:white;/*Couleur du texte à l'intérieur du bouton*//*لون نص داخل الزر*/
+    font-size:1rem;/*Taille de la police*//*حجم الخط*/
+    cursor:pointer;/*Changez le curseur de la souris en forme de main.*//*تغيير شكل الماوس على شكل اليد*/
+}
+
+.start-quiz-btn:hover{
+    background:#403795;/*Changer la couleur de fond au survol de la souris.*//*تغيير لون الخلفية عند المرور بالماوس*/
+}
+</style>
+</head>
+<body><!--HTML-->
+<div class="config-container">
+    <h2 class="config-title">Quiz de Programmation</h2><!--Titre de la page--><!--عنوان الصفحه-->
+    <div class="config-option">
+        <h4 class="option-title">Choisissez une catégorie</h4><!--Petit titre--><!--العنوان الصغير-->
+        <div class="category-options">
+            <button class="active">C++</button><!--Le bouton sélectionné au début--><!--الزر المختار في البدايه-->
+            <button>JavaScript</button>
+            <button>HTML</button>
+            <button>POO</button>
+            <button>Python</button>
+            <button>CSS</button>
+            <button>PHP</button>
+        </div>
+    </div>
+    <div class="config-option">
+        <h4 class="option-title">Choisissez le nombre de questions</h4><!--Petit titre--><!--العنوان الصغير-->
+        <div class="question-options">
+            <button class="active">5</button>
+            <button>10</button>
+            <button>15</button>
+            <button>20</button>
+        </div>
+    </div>
+    <button class="start-quiz-btn">Start </button>
+</div>
+<script>//JAVASCRIPT
+//Une fonction prête à l'emploi pour appliquer la modification du bouton sélectionné à n'importe quel groupe de boutons
+//دالة جاهزة لتطبيق تغيير الزر المختار لأي مجموعة أزرار
+function setActive(buttons, clicked){
+    //Tous les boutons sont désactivés en mode « actif ».
+    //كل الأزرار تتخلص من وضع "نشط"
+    buttons.forEach(b => b.classList.remove("active"));
+    //Elle apparaît dans une couleur différente selon le CSS de l'élément active.
+    //يظهر بلون مختلف وفق CSS للـ active.
+    clicked.classList.add("active");
+}
+//Lorsque l'utilisateur clique sur un bouton de catégorie :
+//L'ancien bouton qui était actif ne l'est plus.
+//Le nouveau bouton devient actif et affiche une couleur différente, définie par le CSS.
+//عندما يضغط المستخدم على أي زر من أزرار الفئات:
+//الزر القديم الذي كان نشيط لا يصبح نشيطا
+//الزر الجديد يصبح نشط ويظهر بلون مختلف وفق CSS.
+document.querySelectorAll(".category-options button").forEach(btn=>{
+    btn.addEventListener("click",()=>setActive(document.querySelectorAll(".category-options button"), btn));
+});
+//Lorsque vous appuyez sur l'un des boutons, le nombre de questions s'affiche :
+//L'ancien bouton qui était actif ne l'est plus.
+//Le nouveau bouton devient actif et affiche une couleur différente, définie par le CSS.
+//عند الضغط على أي زر من أزرار عدد الأسئلة:
+//الزر القديم الذي كان نشيط لا يصبح نشيطا
+//الزر الجديد يصبح نشط ويظهر بلون مختلف وفق CSS.
+document.querySelectorAll(".question-options button").forEach(btn=>{
+    btn.addEventListener("click",()=>setActive(document.querySelectorAll(".question-options button"), btn));
+});
+//L'utilisateur clique sur le bouton « start quiz ».
+//Le code spécifie la catégorie sélectionnée et le nombre de questions.
+//Il redirige ensuite vers la page meriem2.html et envoie les données via l'URL
+//La seconde page peut alors reconnaître la sélection de l'utilisateur et afficher les questions correspondantes.
+//المستخدم يضغط على زر Start Quiz.
+//الكود يحدد الفئة المختارة وعدد الأسئلة
+//ينتقل إلى صفحة quiz2.html ويرسل البيانات عبر URL
+//الصفحة الثانية يمكنها الآن معرفة ما اختاره المستخدم وعرض الأسئلة المناسبة
+document.querySelector(".start-quiz-btn").addEventListener("click",()=>{
+    const category = document.querySelector(".category-options .active").innerText;
+    const number = document.querySelector(".question-options .active").innerText;
+    window.location.href = `meriem2.html?category=${encodeURIComponent(category)}&number=${number}`;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Memory Game 🧠</title>
+<style>
+  body {
+    margin:0;
+    padding:0;
+    font-family: Arial, sans-serif;
+    color: #0f0;
+    text-align:center;
+    background:black;
+    overflow:hidden;
+  }
+  canvas {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:-1; /* katdir canvas f back */
+  }
+  h1{
+    font-size:40px;
+    margin-top:20px;
+    color:rgb(254, 255, 254);
+    z-index:1;
+    position:relative;
+  }
+  .top{
+    margin-top:10px;
+    font-size:25px;
+    font-weight: bold;
+    color:rgb(243, 246, 243);
+    z-index:1;
+    position:relative;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(4,90px);
+    gap:12px;
+    justify-content:center;
+    margin-top:25px;
+    z-index:1;
+    position:relative;
+  }
+  .card{
+    width:90px;
+    height:90px;
+    background:#848282;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    font-size:26px;
+    transition: transform 0.2s, background 0.2s;
+    color:rgb(255, 255, 255);
+    z-index:1;
+    position:relative;
+  }
+  .card.open{
+    background:rgb(243, 244, 243);
+    color:black;
+    transform: scale(1.1);
+  }
+  button{
+    margin:5px;
+    padding:8px 15px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:15px;
+    background:#565656;
+    color:rgb(248, 253, 248);
+    transition:0.2s;
+    z-index:1;
+    position:relative;
+  }
+  button:hover{
+    background:#333;
+  }
+  #msg{
+    margin-top:15px;
+    font-size:25px;
+    color:rgb(241, 248, 241);
+    z-index:1;
+    position:relative;
+  }
+</style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+  <h1>🧠 MEMORY GAME</h1>
+  <div class="top">
+    ⏱ Time: <span id="time">15</span> | 🎯 Attempts: <span id="tries">5</span>
+  </div>
+  <div>
+    <button onclick="restart()">🔄 Restart</button>
+    <button onclick="goBack()">⬅️ Back</button>
+  </div>
+  <div class="grid" id="grid"></div>
+  <p id="msg"></p>
+  <script>
+    /* ==== PARTICLE BACKGROUND ==== */
+    let canvas = document.getElementById("matrix");
+  let ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// create particles
+let particles = [];
+for(let i=0;i<200;i++){
+  particles.push({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
+    r: Math.random()*3+1,
+    speed: Math.random()*2+0.5,
+    color: `hsl(${Math.random()*360}, 100%, 60%)` // colorful particles
+  });
+}
+
+function drawParticles(){
+  ctx.fillStyle = "rgba(0,0,0,0.2)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+    p.y += p.speed; 
+    if(p.y > canvas.height) p.y = 0;
+    p.x += Math.sin(Date.now()/1000 + p.y/50)*0.5; // subtle horizontal movement
+  });
+}
+
+setInterval(drawParticles,30);
+
+/* ==== MEMORY GAME ==== */
+let sets = [
+  ["💻","💻","</>","</>","PHP","PHP","🐍","🐍"],
+  ["{ }","{ }","JS","JS","HTML","HTML","CSS","CSS"],
+  ["👨‍💻","👨‍💻","C#","C#","DB","DB","⚙️","⚙️"],
+  ["flexbox","flexbox","lambda","lambda","[]","[]","script","script"]
+];
+
+let grid = document.getElementById("grid");
+let first, second, lock;
+let matched;
+let time;
+let timer;
+let tries = 5;
+
+function init(){
+  grid.innerHTML="";
+  first=null;
+  second=null;
+  lock=false;
+  matched=0;
+  time=15;
+
+  document.getElementById("time").innerText=time;
+  document.getElementById("tries").innerText=tries;
+  document.getElementById("msg").innerText="";
+
+  let symbols = [...sets[Math.floor(Math.random()*sets.length)]];
+  symbols.sort(()=>0.5 - Math.random());
+
+  symbols.forEach(sym=>{
+    let card=document.createElement("div");
+    card.className="card";
+    card.innerText="?";
+
+    card.onclick=function(){
+      if(lock || card.classList.contains("open") || time<=0) return;
+      card.innerText=sym;
+      card.classList.add("open");
+
+      if(!first){
+        first=card;
+      }else{
+        second=card;
+        lock=true;
+
+        if(first.innerText===second.innerText){
+          matched++;
+          first=null;
+          second=null;
+          lock=false;
+          if(matched===symbols.length/2) win();
+        }else{
+          setTimeout(()=>{
+            first.innerText="?";
+            second.innerText="?";
+            first.classList.remove("open");
+            second.classList.remove("open");
+            first=null;
+            second=null;
+            lock=false;
+          },700);
+        }
+      }
+    };
+
+    grid.appendChild(card);
+  });
+
+  clearInterval(timer);
+  timer=setInterval(()=>{
+    time--;
+    document.getElementById("time").innerText=time;
+    if(time<=0){
+      clearInterval(timer);
+      lose();
+    }
+  },1000);
+}
+
+function win(){
+  clearInterval(timer);
+  document.getElementById("msg").innerText="🔥 Bravo! You won!";
+}
+
+function lose(){
+  tries--;
+  document.getElementById("tries").innerText=tries;
+  if(tries<=0){
+    document.getElementById("msg").innerText="😢 Game Over!";
+  }else{
+    document.getElementById("msg").innerText="⏰ Time Up! Try again";
+    setTimeout(init,1500);
+  }
+}
+
+function restart(){
+  tries=5;
+  init();
+}
+
+function goBack(){
+  window.location.href="hiba2.html";
+}
+
+init();
+
+window.addEventListener("resize",()=>{
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
