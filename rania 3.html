@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>My Skills 🚀</title>
-
 <style>
 body{
     margin:0;
@@ -11,16 +10,12 @@ body{
     background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
     color:white;
 }
-
-/* HEADER */
 .header{
     padding:20px;
     font-size:28px;
     font-weight:bold;
     text-align:center;
 }
-
-/* CARD */
 .card{
     background:#ffffff;
     color:#333;
@@ -31,55 +26,42 @@ body{
     box-shadow:0 15px 40px rgba(0,0,0,0.4);
     text-align:center;
 }
-
-/* AVATAR */
 .avatar{
     width:90px;
     border-radius:50%;
     margin-bottom:10px;
 }
-
-/* STATS */
 .stats{
     display:flex;
     justify-content:space-around;
     margin:15px 0;
 }
-
 .box{
     background:#f1f1f1;
     padding:10px;
     border-radius:10px;
     width:90px;
 }
-
-/* SKILLS */
 .skill{
     margin:12px 0;
     text-align:left;
 }
-
 .skill span{
     font-size:14px;
     font-weight:bold;
 }
-
-/* BAR */
 .progress{
     background:#ddd;
     height:12px;
     border-radius:10px;
     overflow:hidden;
 }
-
 .bar{
     height:100%;
     width:0%;
     border-radius:10px;
     transition:1s;
 }
-
-/* COLORS */
 .html{background:#e34c26;}
 .css{background:#264de4;}
 .js{background:#f0db4f;}
@@ -87,8 +69,6 @@ body{
 .php{background:#8892be;}
 .poo{background:#16a085;}
 .cpp{background:#00599c;}
-
-/* RANK */
 .rank{
     margin-top:15px;
     font-weight:bold;
@@ -112,7 +92,6 @@ body{
 }
 </style>
 </head>
-
 <body>
     <div class="nav">
         <a href="hiba2.html">🏠 Accueil</a>
@@ -120,50 +99,36 @@ body{
         <a href="meriem1.html">📝 Quiz</a>
     </div>
 <div class="header">🚀 My Skills Tracker</div>
-
 <div class="card">
-
 <img class="avatar" src="utilisateur.png">
-
 <div class="stats">
     <div class="box">🏆<br><span id="total"></span></div>
     <div class="box">🔥<br><span id="streak"></span></div>
 </div>
-
 <div class="skill">HTML <span id="htmlText"></span>
     <div class="progress"><div class="bar html" id="htmlBar"></div></div>
 </div>
-
 <div class="skill">CSS <span id="cssText"></span>
     <div class="progress"><div class="bar css" id="cssBar"></div></div>
 </div>
-
 <div class="skill">JavaScript <span id="jsText"></span>
     <div class="progress"><div class="bar js" id="jsBar"></div></div>
 </div>
-
 <div class="skill">Python <span id="pythonText"></span>
     <div class="progress"><div class="bar python" id="pythonBar"></div></div>
 </div>
-
 <div class="skill">PHP <span id="phpText"></span>
     <div class="progress"><div class="bar php" id="phpBar"></div></div>
 </div>
-
 <div class="skill">POO <span id="pooText"></span>
     <div class="progress"><div class="bar poo" id="pooBar"></div></div>
 </div>
-
 <div class="skill">C++ <span id="cppText"></span>
     <div class="progress"><div class="bar cpp" id="cppBar"></div></div>
 </div>
-
 <div class="rank" id="rank"></div>
-
 </div>
-
 <script>
-// 📊 data
 let html = parseInt(localStorage.getItem("html")) || 0;
 let css = parseInt(localStorage.getItem("css")) || 0;
 let js = parseInt(localStorage.getItem("js")) || 0;
@@ -171,17 +136,12 @@ let python = parseInt(localStorage.getItem("python")) || 0;
 let php = parseInt(localStorage.getItem("php")) || 0;
 let poo = parseInt(localStorage.getItem("poo")) || 0;
 let cpp = parseInt(localStorage.getItem("cpp")) || 0;
-
-// total
 let total = Math.round((html+css+js+python+php+poo+cpp)/7);
 document.getElementById("total").innerText = total + "%";
-
-// bars animation
 function setBar(id, textId, value){
     document.getElementById(id).style.width = value + "%";
     document.getElementById(textId).innerText = value + "%";
 }
-
 setBar("htmlBar","htmlText",html);
 setBar("cssBar","cssText",css);
 setBar("jsBar","jsText",js);
@@ -189,28 +149,20 @@ setBar("pythonBar","pythonText",python);
 setBar("phpBar","phpText",php);
 setBar("pooBar","pooText",poo);
 setBar("cppBar","cppText",cpp);
-
-// rank
 let rank="Beginner 😅";
 if(total>=50) rank="Intermediate 💪";
 if(total>=75) rank="Pro 🔥";
 if(total>=90) rank="Master 😎";
-
 document.getElementById("rank").innerText = rank;
-
-// streak
 let today = new Date().toDateString();
 let last = localStorage.getItem("lastLogin");
 let streak = parseInt(localStorage.getItem("streak")) || 0;
-
 if(last !== today){
     streak++;
     localStorage.setItem("streak", streak);
     localStorage.setItem("lastLogin", today);
 }
-
 document.getElementById("streak").innerText = streak;
 </script>
-
 </body>
 </html>
