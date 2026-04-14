@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Inscription</title>
     <style>
-        /* 🌈 BACKGROUND IMAGE MODERNE */
         body{
             margin:0;
             padding:0;
@@ -16,7 +15,6 @@
             background:url("background.jpeg") no-repeat center center/cover;
             color:white;
         }
-        /* 🌫️ DARK OVERLAY */
         body::before{
             content:"";
             position:absolute;
@@ -27,7 +25,6 @@
             background:rgba(0,0,0,0.55);
             z-index:0;
         }
-        /* 🖼️ LOGO SIDE */
         .logo{
             position: fixed;
             top: 30px;
@@ -38,7 +35,6 @@
             box-shadow:0 0 15px rgb(169, 232, 247);
             z-index:999;
         }
-        /* 🏷️ LOGO TEXT */
         .logo-text{
             position: fixed;
             top: 160px;
@@ -49,7 +45,6 @@
             text-align:center;
             z-index:999;
         }
-        /* 📦 CONTAINER GLASS */
         .container{
             position:relative;
             z-index:1;
@@ -82,7 +77,6 @@
             border:1px solid #38BDF8;
             box-shadow:0 0 10px #38BDF8;
         }
-        /* 👨‍👩‍👧 GENDER */
         .gender-modern{
             display:flex;
             gap:10px;
@@ -105,7 +99,6 @@
             border:1px solid #38BDF8;
             background:rgba(56,189,248,0.25);
         }
-        /* 🔐 PASSWORD */
         .password-box{
             position:relative;
         }
@@ -116,7 +109,6 @@
             transform:translateY(-50%);
             cursor:pointer;
         }
-        /* 📅 DATE */
         .date-box{
             position:relative;
         }
@@ -127,7 +119,6 @@
             transform:translateY(-50%);
             cursor:pointer;
         }
-        /* 🚀 BUTTON */
         button{
             width:100%;
             padding:12px;
@@ -147,7 +138,6 @@
     </style>
 </head>
 <body>
-    <!-- 🖼️ LOGO -->
     <img src="logo.jpg" class="logo" alt="Logo">
     <div class="logo-text">P.A.I.PR</div>
     <div class="container">
@@ -172,7 +162,6 @@
         <div class="gender-card" onclick="setGender(this,'Femme')">👩 Femme</div>
     </div>
     <input type="hidden" id="genre">
-    <!-- 🌍 COUNTRIES -->
     <select id="pays">
         <option value="">🌍 Choisir pays</option>
         <option>🇲🇦 Morocco</option>
@@ -229,7 +218,6 @@
     </div>
         <button onclick="register()">S'inscrire</button>
     </div>
-    <!-- 🔴 JS (inchangé) -->
     <script>
         function openDate(){
             const dateInput = document.getElementById("birth");
@@ -273,7 +261,6 @@
             var pays = document.getElementById("pays").value;
             var pass = document.getElementById("pass").value.trim();
             var confirm = document.getElementById("confirm").value.trim();
-            // 1. check empty
             if(
                 nom === "" || tel === "" || email === "" ||
                 age === "" || birth === "" || genre === "" ||
@@ -282,14 +269,11 @@
                 alert("❌ remplir tous les champs");
                 return;
             }
-            // 2. check password
             if(pass !== confirm){
                 alert("❌ mot de passe non confirmé");
                 return;
             }
-            // 3. get users safely
             var users = JSON.parse(localStorage.getItem("users")) || [];
-            // 4. FIX SAFE CHECK (important)
             var exist = users.some(function(u){
                 return typeof u.nom === "string" &&
                 u.nom.trim().toLowerCase() === nom.toLowerCase();
@@ -298,7 +282,6 @@
                 alert("❌ utilisateur existe déjà");
                 return;
             }
-            // 5. save user
             users.push({
                 nom: nom,
                 tel: tel,
@@ -307,7 +290,6 @@
             });
             localStorage.setItem("users", JSON.stringify(users));
             alert("✅ inscription réussie");
-            // 6. redirect
             window.location.href = "hiba.html";
         }
     </script>
