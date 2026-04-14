@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Quiz</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>/*CSS*/
+<style>
 body{
     margin:0;/*Suppression des espaces blancs*//*ازاله الفراغات البيضاء*/
     min-height:100vh; /*La hauteur occupe tout l'écran.*//*الارتفاع يأخذ كامل الشاشة.*/
@@ -69,7 +69,6 @@ body{
 }
 </style>
 </head>
-<!--HTML-->
 <body>
 <div class="quiz">
   <h3 id="title"></h3><!--Un titre court dont la fonction est d'afficher le nom de la catégorie et le nombre de questions-->
@@ -85,9 +84,7 @@ function goProfile(){
     window.location.href = "rania 3.html"; // smiyat page tracker dyalk
 }
 </script>
-<script>//JAVASCRIPT
-//Lecture des données de la page précédente
-//قراءة البيانات القادمة من الصفحة السابقة
+<script>
 const params=new URLSearchParams(location.search);
 //Sélectionnez la langue choisie par l'utilisateur
 //تحديد اللغة التي اختارها المستخدم
@@ -273,18 +270,6 @@ const db={
     {q:"Fonction array_push ?",a:["array_push()","push()","add()"],c:0}
   ]
 };
-/*L'utilisateur a sélectionné une langue et un numéro.
-Nous avons récupéré les questions de langue depuis la base de données.
-Nous avons extrait uniquement le nombre de questions requis.
-Nous les avons intégrées au questionnaire.
-Nous avons commencé par la question 0.
-Le score initial était de 0.*/
-/*المستخدم اختار لغة وعدد.
- أخذنا أسئلة اللغة من db.
- أخذنا منها فقط العدد المطلوب.
- خزناها في quiz.
- بدأنا من السؤال 0.
- بدأنا النقاط من 0*/
 let quiz=db[cat].slice(0,num);
 let i=0,score=0;
 function load(){
@@ -294,25 +279,12 @@ function load(){
  //Effacer les boutons de réponse précédents prépare l'espace pour les réponses à la nouvelle question.
  //مسح أزرار الإجابة السابقة تجهيز المكان لإجابات السؤال الجديد.
  document.getElementById("answers").innerHTML="";
- /*Un utilisateur répond à des questions.
-i s'incrémente.
-La fin est atteinte.
-La condition est remplie.
-Le résultat s'affiche.
-Le code s'arrête.*/
-/*لمستخدم يجيب على الأسئلة.
- i يزيد.
- يصل للنهاية.
- الشرط يتحقق.
- يتم عرض النتيجة.
- يتم إيقاف الكود.*/
  if(i>=quiz.length){
   let percent = Math.round((score / quiz.length) * 100);
-  // 🔥 تحويل اسم اللغة ل key صحيح
   let key = cat.toLowerCase();
   if(key === "javascript") key = "js";
   if(key === "c++") key = "cpp";
-  // 🔥 تخزين النتيجة
+  // stocker les resultats تخزين النتيجة
   localStorage.setItem(key, percent);
   document.querySelector(".quiz").innerHTML = `
     <h2>Votre score : ${score} / ${quiz.length}</h2>
@@ -328,18 +300,6 @@ Le code s'arrête.*/
  /*Le texte de la question apparaît à l'utilisateur
   يظهر نص السؤال للمستخدم*/
  document.getElementById("q").innerText=q.q;
-/*Nous récupérons la question actuelle.
-Nous affichons son texte.
-Nous parcourons ses options.
-Nous créons un bouton pour chaque option.
-Nous l'associons à une fonction de vérification.
-Nous l'ajoutons à la page.*/
-/*نأخذ السؤال الحالي.
- نعرض نصه.
- نمر على خياراته.
-ننشئ زرًا لكل خيار.
- نربطه بدالة check.
-نضيفه للصفحة.*/
  q.a.forEach((x,j)=>{
   let b=document.createElement("button");
   b.className="answer";
@@ -348,18 +308,6 @@ Nous l'ajoutons à la page.*/
   answers.appendChild(b);
  });
 }
-/*L'utilisateur clique sur une réponse.
-Les boutons cessent de fonctionner.
-Les réponses correctes apparaissent en vert, les réponses incorrectes en rouge.
-Si la réponse est correcte, un point est ajouté.
-Le bouton  Suivant  apparaît pour passer à la question suivante.
-Cliquer sur  Suivant  affiche la question suivante.*/
-/*المستخدم يضغط على إجابة.
- تتوقف الأزرار عن العمل .
- تظهر الإجابة الصحيحة بالأخضر والخاطئة بالأحمر.
- إذا كانت الإجابة صحيحة، يتم إضافة نقطة.
- يظهر زر Next للانتقال للسؤال التالي.
- عند الضغط على Next، يظهر السؤال التالي*/
 function check(j){
  let good=quiz[i].c;
  document.querySelectorAll(".answer").forEach((b,k)=>{
