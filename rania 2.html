@@ -19,7 +19,7 @@
     left:0;
     width:100%;
     height:100%;
-    z-index:-1; /* katdir canvas f back */
+    z-index:-1; 
   }
   h1{
     font-size:40px;
@@ -103,13 +103,10 @@
   <div class="grid" id="grid"></div>
   <p id="msg"></p>
   <script>
-    /* ==== PARTICLE BACKGROUND ==== */
     let canvas = document.getElementById("matrix");
   let ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-
-// create particles
 let particles = [];
 for(let i=0;i<200;i++){
   particles.push({
@@ -117,14 +114,12 @@ for(let i=0;i<200;i++){
     y: Math.random()*canvas.height,
     r: Math.random()*3+1,
     speed: Math.random()*2+0.5,
-    color: `hsl(${Math.random()*360}, 100%, 60%)` // colorful particles
+    color: `hsl(${Math.random()*360}, 100%, 60%)`
   });
 }
-
 function drawParticles(){
   ctx.fillStyle = "rgba(0,0,0,0.2)";
   ctx.fillRect(0,0,canvas.width,canvas.height);
-
   particles.forEach(p=>{
     ctx.beginPath();
     ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
@@ -132,27 +127,22 @@ function drawParticles(){
     ctx.fill();
     p.y += p.speed; 
     if(p.y > canvas.height) p.y = 0;
-    p.x += Math.sin(Date.now()/1000 + p.y/50)*0.5; // subtle horizontal movement
+    p.x += Math.sin(Date.now()/1000 + p.y/50)*0.5; 
   });
 }
-
 setInterval(drawParticles,30);
-
-/* ==== MEMORY GAME ==== */
 let sets = [
   ["💻","💻","</>","</>","PHP","PHP","🐍","🐍"],
   ["{ }","{ }","JS","JS","HTML","HTML","CSS","CSS"],
   ["👨‍💻","👨‍💻","C#","C#","DB","DB","⚙️","⚙️"],
   ["flexbox","flexbox","lambda","lambda","[]","[]","script","script"]
 ];
-
 let grid = document.getElementById("grid");
 let first, second, lock;
 let matched;
 let time;
 let timer;
 let tries = 5;
-
 function init(){
   grid.innerHTML="";
   first=null;
@@ -160,30 +150,24 @@ function init(){
   lock=false;
   matched=0;
   time=15;
-
   document.getElementById("time").innerText=time;
   document.getElementById("tries").innerText=tries;
   document.getElementById("msg").innerText="";
-
   let symbols = [...sets[Math.floor(Math.random()*sets.length)]];
   symbols.sort(()=>0.5 - Math.random());
-
   symbols.forEach(sym=>{
     let card=document.createElement("div");
     card.className="card";
     card.innerText="?";
-
     card.onclick=function(){
       if(lock || card.classList.contains("open") || time<=0) return;
       card.innerText=sym;
       card.classList.add("open");
-
       if(!first){
         first=card;
       }else{
         second=card;
         lock=true;
-
         if(first.innerText===second.innerText){
           matched++;
           first=null;
@@ -203,10 +187,8 @@ function init(){
         }
       }
     };
-
     grid.appendChild(card);
   });
-
   clearInterval(timer);
   timer=setInterval(()=>{
     time--;
@@ -217,12 +199,10 @@ function init(){
     }
   },1000);
 }
-
 function win(){
   clearInterval(timer);
   document.getElementById("msg").innerText="🔥 Bravo! You won!";
 }
-
 function lose(){
   tries--;
   document.getElementById("tries").innerText=tries;
@@ -233,23 +213,18 @@ function lose(){
     setTimeout(init,1500);
   }
 }
-
 function restart(){
   tries=5;
   init();
 }
-
 function goBack(){
   window.location.href="hiba2.html";
 }
-
 init();
-
 window.addEventListener("resize",()=>{
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 });
 </script>
-
 </body>
 </html>
